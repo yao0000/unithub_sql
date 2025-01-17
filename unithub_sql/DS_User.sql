@@ -1,0 +1,14 @@
+USE [unithub]
+GO
+
+CREATE TABLE [dbo].[DS_User] (
+	[ID]			BIGINT			IDENTITY (1, 1) NOT NULL,
+	[Username]		NVARCHAR(20)	NULL,
+	[Email]			NVARCHAR(30)	NULL,
+	[HashedPwd]		BINARY(100)		NULL,
+	[Salt]			BINARY(50)		NULL,
+	[Role]			NVARCHAR(5)		CONSTRAINT [DF_DS_User_Role] DEFAULT ('User') NOT NULL,
+	[AccessRight]	NVARCHAR(10)	CONSTRAINT [DF_DS_User_AccessRight] DEFAULT ('Pending') NOT NULL,
+	
+	CONSTRAINT [PK_DS_USER] PRIMARY KEY CLUSTERED ([ID] ASC)
+)
