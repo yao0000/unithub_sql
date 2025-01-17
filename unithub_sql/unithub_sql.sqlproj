@@ -61,7 +61,7 @@
     <Folder Include="03_StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="02_Tables\DS_User.sql" />
-    <Build Include="01_DDL\Init.sql" />
+    <Build Include="02_Tables\01. DS_User.sql" />
+    <Build Include="01_DDL\01. Init.sql" />
   </ItemGroup>
 </Project>
