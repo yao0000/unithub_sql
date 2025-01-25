@@ -7,10 +7,12 @@ CREATE TABLE User (
 	Username      VARCHAR(20)    NULL,
 	Email         VARCHAR(30)    NULL,
 	HashedPwd     VARCHAR(30)    NULL,
-	Salt          VARCHAR(50)     NULL,
+	Salt          VARCHAR(50)    NULL,
 	Role          VARCHAR(5)     NOT NULL DEFAULT ('User'),
 	AccessRight   VARCHAR(10)    NOT NULL DEFAULT ('Pending'),
-    CreatedDate   DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CreatedTime   DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    GUID          CHAR(36)       NOT NULL,
 	
-	CONSTRAINT PK_DS_USER PRIMARY KEY CLUSTERED (ID ASC)
+	CONSTRAINT PK_DS_USER PRIMARY KEY (ID),
+    CONSTRAINT UQ_GUID UNIQUE (GUID)
 );
