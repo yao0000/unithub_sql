@@ -23,9 +23,9 @@ BEGIN
 	ELSEIF NOT EXISTS ( SELECT 1 FROM User WHERE GUID = p_user_guid ) THEN 
 		SELECT 'User not found' AS Message, -4 AS Response;
 	ELSE
-		IF (p_access_right = 1) THEN
+		IF (p_access_right = 0) THEN
 			SET var_access_right = 'Active';
-		ELSEIF (p_access_right = 0) THEN
+		ELSEIF (p_access_right = 1) THEN
 			SET var_access_right = 'Pending';
 		ELSE
 			SET var_access_right = 'Block';
