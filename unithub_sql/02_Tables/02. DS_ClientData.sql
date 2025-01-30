@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS ClientData;
 CREATE TABLE ClientData(
 	ID            BIGINT         AUTO_INCREMENT NOT NULL,
     Identity      VARCHAR(14)    NULL,
-    FullName      VARCHAR(50)    NULL,
+    Name          VARCHAR(50)    NULL,
     Email         VARCHAR(30)    NULL,
     Mobile        VARCHAR(15)    NULL,
     FirstTime     VARCHAR(1)     NULL,
@@ -14,13 +14,14 @@ CREATE TABLE ClientData(
     City          VARCHAR(20)    NULL,
     State         VARCHAR(20)    NULL,
     PaymentDate   DATETIME       NOT NULL,
-    AgenctCmp     VARCHAR(50)    NOT NULL,
+    AgencyCmp     VARCHAR(50)    NOT NULL,
     AgentName     VARCHAR(30)    NOT NULL,
     AgentPhone    VARCHAR(15)    NOT NULL,
     Remarks       VARCHAR(50)    NOT NULL,
     CreatedTime   DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UserGUID      CHAR(36)       NOT NULL,
+    AuthorGUID    CHAR(36)       NOT NULL,
+    GUID          CHAR(36)       NOT NULL DEFAULT (UUID()),
 	
-	CONSTRAINT PK_DS_USER PRIMARY KEY (ID),
-    CONSTRAINT UQ_GUID UNIQUE (UserGUID)
+	CONSTRAINT PK_ClientData PRIMARY KEY (ID),
+    CONSTRAINT UQ_GUID UNIQUE (GUID)
 );

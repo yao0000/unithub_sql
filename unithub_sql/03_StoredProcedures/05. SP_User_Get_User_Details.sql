@@ -6,9 +6,11 @@ CREATE PROCEDURE SP_User_Get_User_Details(
 	IN p_guid VARCHAR(36)
 )
 BEGIN
+	DECLARE err_msg TEXT;
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
-        SELECT 'Exception caught: SP_User_Get_User_Details' AS Message, -1 AS Response;
+		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception caught: SP_User_Get_User_Details', IFNULL(err_msg, 'NULL error message') AS Message, -1 AS Response;
     END;
     
     IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User' AND GUID = p_guid) THEN
@@ -18,7 +20,8 @@ BEGIN
             id, Username, Email, Salt, Role, AccessRight, CreatedTime, GUID
         FROM User
         WHERE Role = 'User'
-        AND GUID = p_guid;
+        AND GUID = p_guid
+        LIMIT 1;
     END IF;
 END //
 

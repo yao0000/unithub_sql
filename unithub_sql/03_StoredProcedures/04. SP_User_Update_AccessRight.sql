@@ -9,11 +9,13 @@ CREATE PROCEDURE SP_User_Update_AccessRight(
     IN p_access_right INT
 )
 BEGIN
+	DECLARE err_msg TEXT;
 	DECLARE var_access_right VARCHAR(10);
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
 		ROLLBACK;
-        SELECT 'Exception catch: SP_User_Update_AccessRight' AS Message, -1 AS Response;
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception: User_Update_AccessRight - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
     
     START TRANSACTION;

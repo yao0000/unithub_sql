@@ -9,9 +9,12 @@ CREATE PROCEDURE SP_User_Login(
     IN p_password VARCHAR(30)
 )
 BEGIN
+	DECLARE err_msg TEXT;
+    
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
-        SELECT 'Exception catch: SP_User_Login' AS Message, -1 AS Response;
+		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception: User_Login - ', IFNULL(err_msg, 'NULL error message'))  AS Message, -1 AS Response;
     END;
     
     IF NOT EXISTS ( SELECT 1 FROM User WHERE Email = p_email ) THEN
@@ -24,7 +27,7 @@ BEGIN
 		SELECT 'Account is pending approval.' AS Message, -6 AS Response;
 	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active' ) THEN
 		SELECT 'Success' AS Message, 0 AS Response, 
-        CAST(GUID AS CHAR) AS GUID 
+        CAST(GUID AS CHAR) AS GUID, Username 
         FROM User
         WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active';
 	ELSE

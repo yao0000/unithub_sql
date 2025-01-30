@@ -9,18 +9,18 @@ CREATE PROCEDURE SP_User_Register(
     IN p_password VARCHAR(30)
 )
 BEGIN
+	DECLARE err_msg TEXT;
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SELECT 'Exception caught: SP_User_Register' AS Message, -1 AS Response;
+		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception: User_Register - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
 
     START TRANSACTION;
 
     IF EXISTS (SELECT 1 FROM User WHERE Email = p_email) THEN
         SELECT 'Email already exists.' AS Message, -3 AS Response;
-    ELSEIF EXISTS (SELECT 1 FROM User WHERE Username = p_username) THEN
-        SELECT 'Username already exists.' AS Message, -4 AS Response;
     ELSE
         INSERT INTO User (Username, Email, HashedPwd, GUID)
         VALUES (p_username, p_email, p_password, UUID());

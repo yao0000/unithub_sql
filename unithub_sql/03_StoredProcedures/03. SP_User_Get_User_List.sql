@@ -4,9 +4,11 @@ DROP PROCEDURE IF EXISTS SP_User_Get_User_List;
 
 CREATE PROCEDURE SP_User_Get_User_List()
 BEGIN
+	DECLARE err_msg TEXT;
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
-        SELECT 'Exception caught: SP_User_Get_User_List' AS Message, -1 AS Response;
+		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception: User_Get_User_List - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
     
     IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User') THEN
