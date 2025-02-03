@@ -1,10 +1,10 @@
 USE dingunit;
 
-DROP TABLE IF EXISTS ClientData;
+DROP TABLE IF EXISTS Draft;
 
-CREATE TABLE ClientData(
+CREATE TABLE Draft(
 	ID            BIGINT         AUTO_INCREMENT NOT NULL,
-    Identity      VARCHAR(14)    NULL,
+    Title         VARCHAR(14)    NULL,
     Name          VARCHAR(50)    NULL,
     Email         VARCHAR(30)    NULL,
     Mobile        VARCHAR(15)    NULL,
