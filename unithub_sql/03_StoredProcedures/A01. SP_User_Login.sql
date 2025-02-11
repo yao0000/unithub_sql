@@ -26,8 +26,8 @@ BEGIN
 	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Pending' ) THEN
 		SELECT 'Account is pending approval.' AS Message, -6 AS Response;
 	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active' ) THEN
-		SELECT 'Success' AS Message, 0 AS Response, 
-        CAST(GUID AS CHAR) AS GUID, Username 
+		SELECT 'Login Successfully' AS Message, 0 AS Response, 
+        CAST(GUID AS CHAR) AS GUID
         FROM User
         WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active';
 	ELSE

@@ -5,35 +5,35 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS SP_Draft_Get_Details;
 
 CREATE PROCEDURE SP_Draft_Get_Details(
-    IN p_draft_guid CHAR(36)
+    IN p_draft_guid CHAR(36),
+    IN p_author_guid CHAR(36)
 )
 BEGIN
-	DECLARE err_msg TEXT;
+    DECLARE err_msg TEXT;
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        ROLLBACK;
-		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
-        SELECT CONCAT('Exception caught: Draft_Get_Draft_Details - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SELECT CONCAT('Exception: Draft_Get_Details - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
 
-    CREATE TEMPORARY TABLE output AS
-    SELECT * 
-    FROM Draft
-    WHERE (p_draft_guid IS NULL OR p_draft_guid = '' OR GUID = p_draft_guid)
-    LIMIT 1;
-
-    IF (SELECT COUNT(*) FROM output) = 0 THEN
+    -- Check if the draft exists for the provided author and draft GUID
+    IF (SELECT COUNT(*) FROM Draft WHERE AuthorGUID = p_author_guid AND GUID = p_draft_guid) = 0 THEN
         SELECT 'No data found' AS Message, -3 AS Response;
-	ELSE
+    ELSE
+        -- Select the draft details and join with the User table to get additional info
         SELECT 'Data returned successfully' AS Message, 0 AS Response, 
-			output.Title, output.Name, output.Email, output.Mobile,
-            output.Address, output.PostCode, output.State,
-            output.AgencyCmp, output.AgentName, output.AgentPhone, 
-            output.Remarks, output.FirstTime, output.PaymentDate, output.GUID
-        FROM output;
+            Draft.Title, Draft.Name, Draft.Email, Draft.Mobile,
+            Draft.Address, Draft.PostCode, Draft.City, Draft.State, Draft.PaymentDate, 
+            Draft.AgencyCmp, Draft.AgentName, Draft.AgentPhone, 
+            Draft.Remarks, Draft.FirstTime, 
+            Draft.CreatedTime, Draft.GUID, 
+            User.HashedPwd AS Password
+        FROM Draft
+        INNER JOIN User ON Draft.AuthorGUID = User.GUID
+        WHERE Draft.AuthorGUID = p_author_guid AND Draft.GUID = p_draft_guid
+        LIMIT 1;
     END IF;
-
 END //
 
 DELIMITER ;

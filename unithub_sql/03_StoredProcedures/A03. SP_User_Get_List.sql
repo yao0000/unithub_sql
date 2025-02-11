@@ -1,3 +1,5 @@
+USE dingunit;
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS SP_User_Get_List;
@@ -8,7 +10,7 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
-        SELECT CONCAT('Exception: User_Get_User_List - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
+        SELECT CONCAT('Exception: User_Get_List - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
     
     IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User') THEN

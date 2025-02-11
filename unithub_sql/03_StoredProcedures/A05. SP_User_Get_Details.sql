@@ -10,7 +10,7 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
-        SELECT CONCAT('Exception caught: SP_User_Get_User_Details', IFNULL(err_msg, 'NULL error message') AS Message, -1 AS Response;
+        SELECT CONCAT('Exception: SP_User_Get_Details', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
     
     IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User' AND GUID = p_guid) THEN
