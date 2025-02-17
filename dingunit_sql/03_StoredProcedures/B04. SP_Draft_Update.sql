@@ -19,8 +19,8 @@ CREATE PROCEDURE SP_Draft_Update(
     IN p_agent_name VARCHAR(30),
     IN p_agent_phone VARCHAR(15),
     IN p_remarks VARCHAR(50),
-    IN p_draft_guid CHAR(36),
-    IN p_reader_guid CHAR(36)
+    IN p_author_guid CHAR(36),
+    IN p_draft_guid CHAR(36)
 )
 BEGIN
 	DECLARE err_msg TEXT;
@@ -34,8 +34,15 @@ BEGIN
 
     START TRANSACTION;
     
-    IF NOT EXISTS (SELECT 1 FROM Draft WHERE GUID = p_draft_guid AND AuthorGUID = p_reader_guid) THEN
+    IF NOT EXISTS (SELECT 1 FROM Draft WHERE GUID = p_draft_guid AND AuthorGUID = p_author_guid) THEN
 		SELECT 'Record not found' AS Message, -3 AS Response;
+	ELSEIF EXISTS (SELECT 1 FROM Draft
+		WHERE Title = p_title AND Name = p_name AND Email = p_email AND Mobile = p_mobile AND FirstTime = p_first_time
+            AND Address = p_address AND PostCode = p_postcode AND City = p_city AND State = p_state
+            AND PaymentDate = p_payment_date AND AgencyCmp = p_agency_cmp
+            AND AgentName = p_agent_name AND AgentPhone = p_agent_phone
+            AND Remarks = p_remarks AND AuthorGUID = p_author_guid) THEN
+		SELECT 'Record exists.' AS Message, -4 AS Response;
 	ELSE
 		UPDATE Draft
 		SET 
@@ -53,7 +60,7 @@ BEGIN
 			AgentName = p_agent_name,
 			AgentPhone = p_agent_phone,
 			Remarks = p_remarks
-		WHERE GUID = p_draft_guid AND AuthorGUID = p_reader_guid;
+		WHERE GUID = p_draft_guid AND AuthorGUID = p_author_guid;
         
 		COMMIT;
 		SELECT 'Update successfully' AS Message, 0 AS Response;
