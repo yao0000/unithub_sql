@@ -2,9 +2,8 @@ USE dingunit;
 
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS SP_Reservation_Get_Summary;
-CREATE PROCEDURE SP_Reservation_Get_Summary(
-	IN p_mode CHAR(20),
+DROP PROCEDURE IF EXISTS SP_Reservation_Get_List;
+CREATE PROCEDURE SP_Reservation_Get_List(
     IN p_author_guid CHAR(36)
 )
 BEGIN
@@ -13,32 +12,19 @@ BEGIN
     BEGIN
         ROLLBACK;
 		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
-        SELECT CONCAT('Exception: Reservation_Get_Summary - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
+        SELECT CONCAT('Exception: Reservation_Get_List - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END; 
-
-    DROP TEMPORARY TABLE IF EXISTS output;
     
-    CREATE TEMPORARY TABLE output AS
-    SELECT CLIENT.* 
-    FROM Reservation AS RESERVE
-    INNER JOIN ClientData AS CLIENT ON CLIENT.GUID = RESERVE.ClientDataGUID
-    WHERE (p_author_guid IS NULL OR p_author_guid = '' OR CLIENT.GUID = p_author_guid);
-    
-    IF (SELECT COUNT(*) FROM output) = 0 THEN
+    IF (SELECT COUNT(*) FROM Reservation WHERE AuthorGUID = p_author_guid) = 0 THEN
 		SELECT 'No data found' AS Message, -3 AS Response;
-	ELSEIF p_mode = 'SUMMARY' THEN
-		SELECT 'Data return successfully' ASMessage, 0 AS Response, output.Name, output.Email
-        FROM output;
 	ELSE
         SELECT 'Data returned successfully' AS Message, 0 AS Response, 
-			output.Identity, output.Name, output.Email, output.Mobile,
-            output.Address, output.PostCode, output.State,
-            output.AgencyCmp, output.AgentName, output.AgentPhone, 
-            output.Remarks, output.FirstTime, output.PaymentDate
-        FROM output;
+			Draft.Title, Draft.Name, Reservation.Status, Reservation.CreatedTime
+		FROM Reservation
+        INNER JOIN Draft ON Draft.GUID = Reservation.DraftGUID
+        WHERE Reservation.AuthorGUID = p_author_guid;
     END IF;
     
-    DROP TEMPORARY TABLE IF EXISTS output;
 END //
 
 DELIMITER ;
