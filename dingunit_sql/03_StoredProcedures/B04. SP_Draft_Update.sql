@@ -1,70 +1,68 @@
 USE dingunit;
-
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS SP_Draft_Update;
-
 CREATE PROCEDURE SP_Draft_Update(
+    IN p_draft_guid CHAR(36),
+    IN p_author_guid CHAR(36),
+    IN p_identity_type VARCHAR(50),
+    IN p_identity_number VARCHAR(50),
     IN p_title VARCHAR(14),
-    IN p_name VARCHAR(50),
+    IN p_full_name VARCHAR(100),
+    IN p_preferred_name VARCHAR(50),
     IN p_email VARCHAR(30),
     IN p_mobile VARCHAR(15),
-    IN p_first_time VARCHAR(1),
     IN p_address VARCHAR(50),
     IN p_postcode INT,
     IN p_city VARCHAR(20),
-    IN p_state VARCHAR(20),
-    IN p_payment_date DATETIME, 
+    IN p_state VARCHAR(40),
+	IN p_first_time VARCHAR(1),
+    IN p_payment_date DATETIME,
     IN p_agency_cmp VARCHAR(50),
     IN p_agent_name VARCHAR(30),
     IN p_agent_phone VARCHAR(15),
-    IN p_remarks VARCHAR(50),
-    IN p_author_guid CHAR(36),
-    IN p_draft_guid CHAR(36)
+    IN p_remarks VARCHAR(50)
 )
 BEGIN
-	DECLARE err_msg TEXT;
+    DECLARE err_msg TEXT;
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
         SELECT CONCAT('Exception: Draft_Update - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
 
     START TRANSACTION;
     
     IF NOT EXISTS (SELECT 1 FROM Draft WHERE GUID = p_draft_guid AND AuthorGUID = p_author_guid) THEN
-		SELECT 'Record not found' AS Message, -3 AS Response;
-	ELSEIF EXISTS (SELECT 1 FROM Draft
-		WHERE Title = p_title AND Name = p_name AND Email = p_email AND Mobile = p_mobile AND FirstTime = p_first_time
-            AND Address = p_address AND PostCode = p_postcode AND City = p_city AND State = p_state
-            AND PaymentDate = p_payment_date AND AgencyCmp = p_agency_cmp
-            AND AgentName = p_agent_name AND AgentPhone = p_agent_phone
-            AND Remarks = p_remarks AND AuthorGUID = p_author_guid) THEN
-		SELECT 'Record exists.' AS Message, -4 AS Response;
-	ELSE
-		UPDATE Draft
-		SET 
-			Title = p_title,
-			Name = p_name,
-			Email = p_email,
-			Mobile = p_mobile,
-			FirstTime = p_first_time,
-			Address = p_address,
-			PostCode = p_postcode,
-			City = p_city,
-			State = p_state,
-			PaymentDate = p_payment_date,
-			AgencyCmp = p_agency_cmp,
-			AgentName = p_agent_name,
-			AgentPhone = p_agent_phone,
-			Remarks = p_remarks
-		WHERE GUID = p_draft_guid AND AuthorGUID = p_author_guid;
+        SELECT 'Draft not found or access denied' AS Message, -3 AS Response;
+    ELSE
+        UPDATE Draft
+        SET 
+            IdentityType   = p_identity_type,
+            IdentityNumber = p_identity_number,
+            Title          = p_title,
+            FullName       = p_full_name,
+            PreferredName  = p_preferred_name,
+            Email          = p_email,
+            Mobile         = p_mobile,
+            Address        = p_address,
+            PostCode       = p_postcode,
+            City           = p_city,
+            State          = p_state,
+            FirstTime      = p_first_time,
+            PaymentDate    = p_payment_date,
+            AgencyCmp      = p_agency_cmp,
+            AgentName      = p_agent_name,
+            AgentPhone     = p_agent_phone,
+            Remarks        = p_remarks,
+            CreatedTime    = NOW() 
+        WHERE GUID = p_draft_guid AND AuthorGUID = p_author_guid;
         
-		COMMIT;
-		SELECT 'Update successfully' AS Message, 0 AS Response;
-	END IF;
+        COMMIT;
+        SELECT 'Draft updated successfully' AS Message, 0 AS Response;
+    END IF;
 
 END //
 
