@@ -17,7 +17,7 @@ BEGIN
         SELECT 'No drafts found' AS Message, -3 AS Response;
     ELSE
         SELECT 'Data returned successfully' AS Message, 0 AS Response, 
-            FullName, Email, CreatedTime, GUID
+            FullName, ClientEmail, CreatedTime, GUID, Status
         FROM Draft
         WHERE AuthorGUID = p_author_guid;
     END IF;
