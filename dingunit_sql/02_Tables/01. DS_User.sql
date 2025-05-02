@@ -6,7 +6,7 @@ CREATE TABLE User (
 	ID            BIGINT         AUTO_INCREMENT NOT NULL,
 	Username      VARCHAR(20)    NULL,
 	Email         VARCHAR(30)    NULL,
-	HashedPwd     VARCHAR(30)    NULL,
+	HashedPwd     VARCHAR(100)    NULL,
 	Salt          VARCHAR(50)    NULL,
 	Role          VARCHAR(5)     NOT NULL DEFAULT ('User'),
 	AccessRight   VARCHAR(10)    NOT NULL DEFAULT ('Pending'),

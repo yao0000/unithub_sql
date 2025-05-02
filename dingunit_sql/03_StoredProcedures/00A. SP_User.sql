@@ -60,22 +60,50 @@ BEGIN
     END IF;
 END //
 
-CREATE PROCEDURE SP_User_Get_List()
+CREATE PROCEDURE SP_User_Get_List(
+    IN page_start INT,
+    IN page_size INT,
+    IN search_term VARCHAR(255)
+)
 BEGIN
-	DECLARE err_msg TEXT;
+    DECLARE err_msg TEXT;
+
     DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     BEGIN
-		GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
         SELECT CONCAT('Exception: User_Get_List - ', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
-    
-    IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User') THEN
-        SELECT 'No data found' AS Message, -3 AS Response;
+
+    -- Validate pagination parameters
+    IF page_start < 0 OR page_size <= 0 THEN
+        SELECT 'Invalid pagination parameters' AS Message, -2 AS Response;
     ELSE
-        SELECT 'Data returned successfully' AS Message, 0 AS Response,
-            id, Username, Email, Salt, Role, AccessRight, CreatedTime, GUID
-        FROM User
-        WHERE Role = 'User';
+        -- Check if users exist
+        IF NOT EXISTS (SELECT 1 FROM user WHERE Role = 'User') THEN
+            SELECT 'No users found' AS Message, -3 AS Response;
+        ELSE
+            -- Return user list with status
+            SELECT 
+                'Data returned successfully' AS Message,
+                0 AS Response,
+                GUID, 
+                Username, 
+                AccessRight
+            FROM 
+                user
+            WHERE 
+                Role = 'User' 
+                AND (Username LIKE CONCAT('%', IFNULL(search_term, ''), '%'))
+            ORDER BY 
+                CASE AccessRight
+                    WHEN 'Pending' THEN 1
+                    WHEN 'Active' THEN 2
+                    WHEN 'Banned' THEN 3
+                    ELSE 4
+                END,
+                CreatedTime DESC
+            LIMIT page_start, page_size;
+        END IF;
     END IF;
 END //
 
@@ -129,14 +157,14 @@ BEGIN
         SELECT CONCAT('Exception caught: SP_User_Get_Details', IFNULL(err_msg, 'NULL error message')) AS Message, -1 AS Response;
     END;
     
-    IF NOT EXISTS (SELECT 1 FROM User WHERE Role = 'User' AND GUID = p_guid) THEN
+    IF NOT EXISTS (SELECT 1 FROM User WHERE GUID = p_guid) THEN
         SELECT 'No data found' AS Message, -3 AS Response;
     ELSE
+        -- Fetch user details regardless of role
         SELECT 'Data returned successfully' AS Message, 0 AS Response,
             id, Username, Email, Salt, Role, AccessRight, CreatedTime, GUID
         FROM User
-        WHERE Role = 'User'
-        AND GUID = p_guid
+        WHERE GUID = p_guid
         LIMIT 1;
     END IF;
 END //
