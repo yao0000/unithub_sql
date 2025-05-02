@@ -5,8 +5,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS SP_User_Login;
 
 CREATE PROCEDURE SP_User_Login(
-    IN p_email VARCHAR(30),
-    IN p_password VARCHAR(30)
+    IN p_email VARCHAR(30)
 )
 BEGIN
 	DECLARE err_msg TEXT;
@@ -19,17 +18,16 @@ BEGIN
     
     IF NOT EXISTS ( SELECT 1 FROM User WHERE Email = p_email ) THEN
         SELECT 'Account not found' AS Message, -3 AS Response;
-    ELSEIF NOT EXISTS ( SELECT 1 FROM User WHERE HashedPwd = p_password ) THEN
-        SELECT 'Incorrect password' AS Message, -4 AS Response;
-	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Block' ) THEN
+	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND AccessRight = 'Block' ) THEN
 		SELECT 'Account is blocked' AS Message, -5 AS Response;
-	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Pending' ) THEN
+	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND AccessRight = 'Pending' ) THEN
 		SELECT 'Account is pending approval.' AS Message, -6 AS Response;
-	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active' ) THEN
-		SELECT 'Login Successfully' AS Message, 0 AS Response, 
+	ELSEIF EXISTS ( SELECT 1 FROM User WHERE Email = p_Email AND AccessRight = 'Active' ) THEN
+		SELECT 'Account is found, verifying in progress' AS Message, 0 AS Response, 
+        HashedPwd, 
         CAST(GUID AS CHAR) AS GUID
         FROM User
-        WHERE Email = p_Email AND HashedPwd = p_password AND AccessRight = 'Active';
+        WHERE Email = p_Email AND AccessRight = 'Active';
 	ELSE
 		SELECT 'Unknown' AS Message, -2 AS Response;
     END IF;

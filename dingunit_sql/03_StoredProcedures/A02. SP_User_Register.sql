@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS SP_User_Register;
 CREATE PROCEDURE SP_User_Register(
     IN p_username VARCHAR(20),
     IN p_email VARCHAR(30),
-    IN p_password VARCHAR(30)
+    IN p_password VARCHAR(100)
 )
 BEGIN
 	DECLARE err_msg TEXT;
