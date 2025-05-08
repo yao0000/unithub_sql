@@ -50,12 +50,14 @@ BEGIN
             AND Title = p_title 
             AND FullName = p_full_name 
             AND PreferredName = p_preferred_name 
-            AND ClientEmail = p_client_email 
+            AND ClientEmail = p_client_email
+            AND CountryNumber = p_country_number 
             AND Mobile = p_mobile 
             AND Address = p_address 
             AND PostCode = p_postcode 
             AND City = p_city 
-            AND State = p_state 
+            AND State = p_state
+            AND CountryName = p_country_name
             AND FirstTime = p_first_time 
             AND PaymentDate = p_payment_date 
             AND AgencyCmp = p_agency_cmp 
@@ -68,13 +70,13 @@ BEGIN
 	ELSE
 		INSERT INTO Draft
 			(AuthorGUID, IdentityType, MhubEmail, MhubPassword,ProjectName,BlockName, 
-            UnitName,  IdentityNumber, Title, FullName, PreferredName, ClientEmail, 
-        Mobile, Address, PostCode, City, State, FirstTime, PaymentDate, AgencyCmp,
+            UnitName,  IdentityNumber, Title, FullName, PreferredName, ClientEmail, CountryNumber,
+        Mobile, Address, PostCode, City, State,CountryName, FirstTime, PaymentDate, AgencyCmp,
         AgentName, AgentPhone, Remarks)
 		VALUES
 			(p_author_guid, p_identity_type, p_mhub_email, p_mhub_password, p_project_name,p_block_name, 
-            p_unit_name, p_identity_number, p_title, p_full_name, p_preferred_name, p_client_email,             
-        p_mobile, p_address, p_postcode, p_city, p_state, p_first_time,p_payment_date, p_agency_cmp,
+            p_unit_name, p_identity_number, p_title, p_full_name, p_preferred_name, p_client_email, p_country_number,           
+        p_mobile, p_address, p_postcode, p_city, p_state, p_country_name, p_first_time,p_payment_date, p_agency_cmp,
         p_agent_name, p_agent_phone, p_remarks);
         
 		COMMIT;
