@@ -16,7 +16,7 @@ CREATE TABLE Draft (
     FullName      VARCHAR(100) NOT NULL,               
     PreferredName VARCHAR(50) NOT NULL,                
     ClientEmail   VARCHAR(30) NOT NULL,
-    CountryNumber VARCHAR(5) NOT NULL,               
+    CountryNumber VARCHAR(50) NOT NULL,               
     Mobile        VARCHAR(15) NOT NULL,
     Address       VARCHAR(50) NOT NULL,                
     PostCode      INT,                      
