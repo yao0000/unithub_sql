@@ -13,13 +13,13 @@ CREATE PROCEDURE SP_Draft_Create(
     IN p_full_name VARCHAR(100),
     IN p_preferred_name VARCHAR(50),
     IN p_client_email VARCHAR(30),
-    IN p_country_number VARCHAR(50),        
+    IN p_country_code VARCHAR(50),        
     IN p_mobile VARCHAR(15),
     IN p_address VARCHAR(50),
     IN p_postcode INT,
     IN p_city VARCHAR(20),
     IN p_state VARCHAR(40),
-    IN p_country_name VARCHAR(50),
+    IN p_country VARCHAR(50),
     IN p_first_time VARCHAR(1),
     IN p_payment_date DATETIME,
     IN p_agency_cmp VARCHAR(50),
@@ -53,13 +53,13 @@ BEGIN
             AND FullName = p_full_name 
             AND PreferredName = p_preferred_name 
             AND ClientEmail = p_client_email
-            AND CountryNumber = p_country_number 
+            AND CountryCode = p_country_code
             AND Mobile = p_mobile 
             AND Address = p_address 
             AND PostCode = p_postcode 
             AND City = p_city 
             AND State = p_state
-            AND CountryName = p_country_name
+            AND Country = p_country
             AND FirstTime = p_first_time 
             AND PaymentDate = p_payment_date 
             AND AgencyCmp = p_agency_cmp 
@@ -72,13 +72,13 @@ BEGIN
 	ELSE
 		INSERT INTO Draft
 			(AuthorGUID, IdentityType, MhubEmail, MhubPassword,ProjectName,BlockName, 
-            UnitName,  IdentityNumber, Title, FullName, PreferredName, ClientEmail, CountryNumber,
-        Mobile, Address, PostCode, City, State,CountryName, FirstTime, PaymentDate, AgencyCmp,
+            UnitName,  IdentityNumber, Title, FullName, PreferredName, ClientEmail, CountryCode,
+        Mobile, Address, PostCode, City, State, Country, FirstTime, PaymentDate, AgencyCmp,
         AgentName, AgentPhone, Remarks)
 		VALUES
 			(p_author_guid, p_identity_type, p_mhub_email, p_mhub_password, p_project_name,p_block_name, 
-            p_unit_name, p_identity_number, p_title, p_full_name, p_preferred_name, p_client_email, p_country_number,           
-        p_mobile, p_address, p_postcode, p_city, p_state, p_country_name, p_first_time,p_payment_date, p_agency_cmp,
+            p_unit_name, p_identity_number, p_title, p_full_name, p_preferred_name, p_client_email, p_country_code,           
+        p_mobile, p_address, p_postcode, p_city, p_state, p_country, p_first_time,p_payment_date, p_agency_cmp,
         p_agent_name, p_agent_phone, p_remarks);
         
 		COMMIT;

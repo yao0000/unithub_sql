@@ -18,8 +18,8 @@ BEGIN
         SELECT 'Data returned successfully' AS Message, 0 AS Response, 
             MhubEmail,MhubPassword,ProjectName,BlockName,UnitName,
             IdentityType,IdentityNumber,Title,FullName,PreferredName,         
-            ClientEmail, CountryNumber, Mobile, Address, PostCode, City, 
-            State, CountryName, FirstTime, PaymentDate, 
+            ClientEmail, CountryCode, Mobile, Address, PostCode, City, 
+            State, Country, FirstTime, PaymentDate, 
             AgencyCmp, AgentName, AgentPhone, Remarks, CreatedTime, GUID, AuthorGUID
 
         FROM Draft
