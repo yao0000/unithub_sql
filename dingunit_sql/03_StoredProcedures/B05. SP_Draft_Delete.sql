@@ -17,7 +17,7 @@ BEGIN
     
     IF (SELECT COUNT(*) FROM Draft WHERE GUID = p_draft_guid) = 0 THEN
         SELECT 'No record found.' AS Message, -3 AS Response;
-    ELSEIF EXISTS (SELECT COUNT(*) FROM Reservation WHERE GUID = p_draft_guid) THEN
+    ELSEIF EXISTS (SELECT 1 FROM Reservation WHERE GUID = p_draft_guid) THEN
         SELECT 'Transaction existing, data is not allowed to be deleted' AS Message, -4 AS Response; 
     ELSE
         DELETE FROM Draft WHERE GUID = p_draft_guid;

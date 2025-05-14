@@ -160,7 +160,7 @@ BEGIN
     ELSE
         -- Fetch user details regardless of role
         SELECT 'Data returned successfully' AS Message, 0 AS Response,
-            id, Username, Email, Salt, Role, AccessRight, CreatedTime, GUID
+            id, Username, Email, Role, AccessRight, CreatedTime, GUID
         FROM User
         WHERE GUID = p_guid
         LIMIT 1;
